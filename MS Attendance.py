@@ -26,7 +26,7 @@ df = pd.DataFrame(data)
 #drop teacher name
 
 #remove duplicate names 
-df.drop_duplicates(subset ="Full Name",keep = False, inplace = True) 
+df.drop_duplicates(subset ="Full Name", inplace = True) 
 
 #sort names ascending order
 sorted=df.sort_values(by='Full Name')
