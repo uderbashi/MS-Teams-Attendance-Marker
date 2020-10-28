@@ -1,6 +1,6 @@
 import pandas as pd
-import numpy as np
-import time
+from numpy import timedelta64
+from time import sleep
 
 def main():
 	print("Welcome to Microsoft Teams Attendance Parser\nPlease make sure the downloaded attendance file is in the same directory as this file.\n")
@@ -15,7 +15,7 @@ def main():
 		f = open(src)
 	except IOError:
 		print("Fatal Error: " + src + " does not exist.\nExiting in 2 seconds")
-		time.sleep(2)
+		sleep(2)
 		exit()
 	f.close()
 
@@ -49,7 +49,7 @@ def main():
 
 		if data['User Action'][i] == "Left":
 			print("Fatal Error: A \"Left\" found before a \"Joined\"\nExiting in 2 seconds")
-			time.sleep(2)
+			sleep(2)
 			exit()
 
 		# Some variables that will be used later
@@ -64,13 +64,13 @@ def main():
 		for j in range(i + 1, rows):
 			if data['Full Name'][j] == currentName:
 				if data['User Action'][j] == "Left":
-					desired.loc[currentID, 'Total Time (m)'] += (data['Timestamp'][j] - data['Timestamp'][i]) / np.timedelta64(1,'m')
+					desired.loc[currentID, 'Total Time (m)'] += (data['Timestamp'][j] - data['Timestamp'][i]) / timedelta64(1,'m')
 					inRange = True
 					histogram[j] = True
 					break
 				else:
 					print("Fatal Error: Multiple \"Joined\" in Succession\nExiting in 2 seconds")
-					time.sleep(2)
+					sleep(2)
 					exit()
 
 		# If an exit isn't found then the user is still in the meeting
