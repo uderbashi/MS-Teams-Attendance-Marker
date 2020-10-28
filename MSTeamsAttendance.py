@@ -6,7 +6,7 @@ def main():
 	print("Welcome to Microsoft Teams Attendance Parser\nPlease make sure the downloaded attendance file is in the same directory as this file.\n")
 
 	# Taking the name of the source
-	name = input("Enter your Attendance file name:")
+	name = input("Enter your Attendance file name (without .csv):")
 	src = (name + ".csv")
 	dest = (name + "_converted.csv")
 
@@ -81,6 +81,7 @@ def main():
 	# Format the output and convert to destination csv file
 	desired['Total Time (m)'] = desired['Total Time (m)'].map('{:,.2f}'.format)
 	desired['Last Entry'] = desired['Last Entry'].dt.time
+	desired.sort_values(by='Full Name', ignore_index=True, inplace=True)
 	desired.to_csv(dest, encoding='utf-16', sep='\t', header=True, index=False)
 
 
