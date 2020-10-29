@@ -8,7 +8,8 @@ This is a Python script that automates the work of sorting out participants pres
 3. Gives total time spent in the meeting in case of multiple entries (does not count last entry since MS Teams doesn't include the timestamp of the attendance downloading)
 
 ## How to use:
+0. Make sure you have `python` and `pandas` installed.
 1. Drop your `.csv` file downloaded during the meeting into the same directory as the script.
-2. Run the `MSTeamsAttendance.py` program and follow the step-by-step procedure on it.
+2. Run the `MSTeamsAttendance.py` script.
  
 
