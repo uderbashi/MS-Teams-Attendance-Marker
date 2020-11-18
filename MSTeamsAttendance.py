@@ -10,6 +10,13 @@ def main():
 	src = (name + ".csv")
 	dest = (name + "_converted.csv")
 
+	# Asking to add a timestamp for visibility
+	isTimestampAdded = input("\nIf you know the time the attendance list was taken you can input it\nso the total time would be calculated... Do you want to enter it? (y/n):")
+	isTimestampAdded = True if isTimestampAdded == 'y' or isTimestampAdded == 'Y' else False
+	if isTimestampAdded == True:
+		inputTimestamp = input("Please input the date in the format of dd/mm/yyyy hh:mm :")
+		inputTimestamp = pd.Timestamp(inputTimestamp)
+
 	# make sure file exists
 	try:
 		f = open(src)
@@ -20,12 +27,17 @@ def main():
 	f.close()
 
 	# Reading the raw data and convering it to a dataframe
-	raw = pd.read_csv(src, encoding='utf-16', delimiter='\t')
+	raw = pd.read_csv(src, encoding='utf-8', delimiter='\t')
 	data = pd.DataFrame(raw)
 
 	# Converting to pandas timestamp and sorting
 	data['Timestamp'] = data['Timestamp'].apply(pd.Timestamp)
 	data.sort_values(by='Timestamp', ignore_index=True, inplace=True)
+
+	# if the attendance taking timestamp was added, we make sure that it comes after all the other timestamps
+	if isTimestampAdded == True:
+		while data['Timestamp'].iloc[-1] > inputTimestamp:
+			inputTimestamp += pd.Timedelta(minutes=1)
 
 	# Prepping the desired output 
 	desired = data.copy()
@@ -76,13 +88,16 @@ def main():
 		# If an exit isn't found then the user is still in the meeting
 		if inRange == False :
 			desired.loc[currentID, 'Still In?'] = True
+			if isTimestampAdded == True:
+				desired.loc[currentID, 'Total Time (m)'] += (inputTimestamp - data['Timestamp'][i]) / timedelta64(1,'m')
 
 
 	# Format the output and convert to destination csv file
-	desired['Total Time (m)'] = desired['Total Time (m)'].map('{:,.2f}'.format)
+	desired['Total Time (m)'] = desired['Total Time (m)'].map('{:,.1f}'.format)
 	desired['Last Entry'] = desired['Last Entry'].dt.time
 	desired.sort_values(by='Full Name', ignore_index=True, inplace=True)
 	desired.to_csv(dest, encoding='utf-16', sep='\t', header=True, index=False)
+	print("Convertion was sucessful... "+ dest+" was produced.")
 
 
 if __name__ == "__main__":
